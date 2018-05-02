@@ -68,14 +68,14 @@ module.exports = {
             if (err) {
                 funcionCallback(null);
             } else {
-                var collection = db.collection('canciones');
+                var collection = db.collection('usuarios');
                 collection.count(function(err, count) {
                     collection.find(criterio).skip((pg - 1) * 4).limit(4)
-                            .toArray(function(err, canciones) {
+                            .toArray(function(err, usuarios) {
                                 if (err) {
                                     funcionCallback(null);
                                 } else {
-                                    funcionCallback(canciones, count);
+                                    funcionCallback(usuarios, count);
                                 }
                                 db.close();
                             });
