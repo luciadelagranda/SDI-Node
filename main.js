@@ -18,7 +18,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 var gestorBD = require("./modules/gestorBD.js");
 gestorBD.init(app,mongo);
 
-//no uso public aun, por tanto no se declara (img, audios...)
+app.use(express.static('public'));
+
+app.get('/', function (req, res) {
+	res.redirect('/identificarse');
+	})
 
 //Variables
 app.set('port', 8081);
