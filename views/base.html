@@ -29,13 +29,22 @@
 			</div>
 			<div class="collapse navbar-collapse" id="myNavbar">
 				<ul class="nav navbar-nav">
+					{% if emailSession != null %}
 					<li id="Lista usuarios"><a href="/listar">Usuarios</a></li>
+					
+					{% endif%}
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
+					{% if emailSession == null %}
 					<li><a href="/registrarse"><span
 							class="glyphicon glyphicon-user"></span> Registrate</a></li>
 					<li><a href="/identificarse"><span
 							class="glyphicon glyphicon-log-in"></span> Identifícate</a></li>
+					{% endif%}
+					{% if emailSession != null %}
+					<li><a href="/desconectarse"><span
+							class="glyphicon glyphicon-user"></span> Desconectar</a></li>
+					{% endif%}
 				</ul>
 			</div>
 		</div>

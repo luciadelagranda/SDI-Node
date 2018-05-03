@@ -41,10 +41,15 @@ block contenido_principal %}
 				{% if usuario.email != emailSession %}
 				<td>
 				{% for peticion in peticiones %}
-					{% if usuario.email == peticion.emailPeticionado %}
+					{% if usuario.email == peticion.emailPeticionado && !peticion.amigos %}
 						<a class="btn btn-warning  pull-right" disabled="true" >PETICION ENVIADA</a>
 						{% set flag = "true" %}
+					
+					{% elif  usuario.email == peticion.emailPeticionado && peticion.amigos %}
+						<a class="btn btn-success  pull-right" disabled="true" >YA SOIS AMIGOS</a>
+						{% set flag = "true" %}
 					{% endif %}
+					
 				{% endfor %}
 				
 				

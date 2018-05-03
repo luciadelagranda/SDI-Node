@@ -1,7 +1,7 @@
 module.exports = function(app, swig, gestorBD) {
 
 	app.get("/registrarse", function(req, res) {
-		var respuesta = swig.renderFile('views/bregistro.html', {});
+		var respuesta = swig.renderFile('views/bregistro.html', {emailSession : req.session.usuario});
 		res.send(respuesta);
 	});
 
@@ -41,8 +41,10 @@ module.exports = function(app, swig, gestorBD) {
 																			res
 																					.send("No se ha podido registrar el usuario");
 																		} else {
+																			req.session.usuario = usuario.email;
 																			res
 																					.redirect("/listar");
+																			
 																		}
 																	});
 												}
@@ -54,7 +56,9 @@ module.exports = function(app, swig, gestorBD) {
 					})
 
 	app.get("/identificarse", function(req, res) {
-		var respuesta = swig.renderFile('views/bidentificacion.html', {});
+		var respuesta = swig.renderFile('views/bidentificacion.html', {
+			emailSession : req.session.usuario
+		});
 		res.send(respuesta);
 	});
 
@@ -79,7 +83,7 @@ module.exports = function(app, swig, gestorBD) {
 	
 	app.get('/desconectarse', function(req, res) {
 		req.session.usuario = null;
-		res.send("Usuario desconectado");
+		res.redirect("/identificarse");
 	})
 
 
@@ -139,7 +143,8 @@ module.exports = function(app, swig, gestorBD) {
 		var emailPeticionado = req.params.id;
 		var peticion = {
 			emailPeticionador: req.session.usuario,
-			emailPeticionado : emailPeticionado
+			emailPeticionado : emailPeticionado,
+			amigos: false
 		}
 		gestorBD.insertarPeticion(peticion, function(idPeticion) {
 			if (idPeticion == null) {
@@ -149,5 +154,8 @@ module.exports = function(app, swig, gestorBD) {
 			}
 		});
 	})
+	
+	
+	
 
 };

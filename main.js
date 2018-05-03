@@ -28,7 +28,7 @@ var routerUsuarioSession = express.Router();
 	 // dejamos correr la petición
 	 next();
 	 } else {
-	 console.log("va a : "+req.session.destino)
+	 console.log("va a : "+req.session.usuario)
 	 res.redirect("/identificarse");
 	 }
 });
