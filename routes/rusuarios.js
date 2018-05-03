@@ -1,7 +1,7 @@
 module.exports = function(app, swig, gestorBD) {
 
 	app.get("/registrarse", function(req, res) {
-		var respuesta = swig.renderFile('views/bregistro.html', {});
+		var respuesta = swig.renderFile('views/bregistro.html', {emailSession : req.session.usuario});
 		res.send(respuesta);
 	});
 
@@ -41,8 +41,10 @@ module.exports = function(app, swig, gestorBD) {
 																			res
 																					.send("No se ha podido registrar el usuario");
 																		} else {
+																			req.session.usuario = usuario.email;
 																			res
 																					.redirect("/listar");
+																			
 																		}
 																	});
 												}
@@ -54,7 +56,9 @@ module.exports = function(app, swig, gestorBD) {
 					})
 
 	app.get("/identificarse", function(req, res) {
-		var respuesta = swig.renderFile('views/bidentificacion.html', {});
+		var respuesta = swig.renderFile('views/bidentificacion.html', {
+			emailSession : req.session.usuario
+		});
 		res.send(respuesta);
 	});
 
@@ -76,6 +80,12 @@ module.exports = function(app, swig, gestorBD) {
 								}
 						});
 	});
+	
+	app.get('/desconectarse', function(req, res) {
+		req.session.usuario = null;
+		res.redirect("/identificarse");
+	})
+
 
 	app.get("/listar", function(req, res) {
 		var criterio = {};
@@ -101,20 +111,107 @@ module.exports = function(app, swig, gestorBD) {
 			if (usuarios == null) {
 				res.send("Error al listar.");
 			} else {
+				
+				var criterio = { $or : [{
+						emailPeticionador: req.session.usuario
+				      },
+				      { emailPeticionado : req.session.usuario}
+						
+				]};
+				
+				var peticiones = gestorBD.obtenerPeticiones(criterio,
+			              function(peticiones) {
 
-				var pgUltima = total / 4;
-				if (total % 4 > 0) { // Sobran decimales
-					pgUltima = pgUltima + 1;
-				}
+			                var pgUltima = total / 5;
+			                if (total % 5 > 0) { // Sobran decimales
+			                  pgUltima = pgUltima + 1;
+			                }
 
-				var respuesta = swig.renderFile('views/busuarios.html', {
-					usuarios : usuarios,
-					pgActual : pg,
-					pgUltima : pgUltima
-				});
-				res.send(respuesta);
+			                var respuesta = swig.renderFile('views/busuarios.html', {
+								usuarios : usuarios,
+								pgActual : pg,
+								pgUltima : pgUltima,
+								emailSession : req.session.usuario,
+								peticiones: peticiones
+			                });
+			                res.send(respuesta);
+			              });
 			}
+				
 		});
 	});
+	
+	
+	app.get('/enviarPeticion/:id', function(req, res) {
+		var emailPeticionado = req.params.id;
+		var peticion = {
+			emailPeticionador: req.session.usuario,
+			emailPeticionado : emailPeticionado,
+			amigos: false
+		}
+		gestorBD.insertarPeticion(peticion, function(idPeticion) {
+			if (idPeticion == null) {
+				res.redirect("/listar?mensaje=No existe el usuario;");
+			} else {
+				res.redirect("/listar");
+			}
+		});
+	})
+	
+	
+	app.get("/listarPeticiones", function(req, res) {
+		var criterio = {
+				emailPeticionado: req.session.usuario
+		      }
+
+		var pg = parseInt(req.query.pg); // Es String !!!
+		if (req.query.pg == null) { // Puede no venir el param
+			pg = 1;
+		}
+		gestorBD.obtenerPeticionesPg(criterio, pg, function(peticiones, total) {
+			if (peticiones == null) {
+				res.send("Error al listar.");
+			} else {
+
+			                var pgUltima = total / 5;
+			                if (total % 5 > 0) { // Sobran decimales
+			                  pgUltima = pgUltima + 1;
+			                }
+
+			                var respuesta = swig.renderFile('views/bpeticiones.html', {
+								pgActual : pg,
+								pgUltima : pgUltima,
+								emailSession : req.session.usuario,
+								peticiones: peticiones
+			                });
+			                res.send(respuesta);
+			   
+			}
+				
+		});
+	})
+	
+	app.get('/aceptarPeticion/:id', function(req, res) {
+		var emailPeticionador = req.params.id;
+		
+		var peticion = {
+			emailPeticionador : emailPeticionador,
+			emailPeticionado: req.session.usuario,
+			amigos: true
+		}
+		
+		var criterio = {
+				emailPeticionador : emailPeticionador,
+				emailPeticionado: req.session.usuario,
+		}
+		
+		gestorBD.modificarPeticion(criterio,peticion, function(emailPeticionado) {
+			if (emailPeticionado == null) {
+				res.redirect("/listarPeticiones?mensaje=No existe el usuario;");
+			} else {
+				res.redirect("/listarPeticiones");
+			}
+		});
+	})
 
 };
