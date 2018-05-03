@@ -76,6 +76,12 @@ module.exports = function(app, swig, gestorBD) {
 								}
 						});
 	});
+	
+	app.get('/desconectarse', function(req, res) {
+		req.session.usuario = null;
+		res.send("Usuario desconectado");
+	})
+
 
 	app.get("/listar", function(req, res) {
 		var criterio = {};
@@ -101,20 +107,47 @@ module.exports = function(app, swig, gestorBD) {
 			if (usuarios == null) {
 				res.send("Error al listar.");
 			} else {
+				
+				var criterio = {
+						emailPeticionador: req.session.usuario
+				      }
+				
+				var peticiones = gestorBD.obtenerPeticiones(criterio,
+			              function(peticiones) {
 
-				var pgUltima = total / 4;
-				if (total % 4 > 0) { // Sobran decimales
-					pgUltima = pgUltima + 1;
-				}
+			                var pgUltima = total / 5;
+			                if (total % 5 > 0) { // Sobran decimales
+			                  pgUltima = pgUltima + 1;
+			                }
 
-				var respuesta = swig.renderFile('views/busuarios.html', {
-					usuarios : usuarios,
-					pgActual : pg,
-					pgUltima : pgUltima
-				});
-				res.send(respuesta);
+			                var respuesta = swig.renderFile('views/busuarios.html', {
+								usuarios : usuarios,
+								pgActual : pg,
+								pgUltima : pgUltima,
+								emailSession : req.session.usuario,
+								peticiones: peticiones
+			                });
+			                res.send(respuesta);
+			              });
 			}
+				
 		});
 	});
+	
+	
+	app.get('/enviarPeticion/:id', function(req, res) {
+		var emailPeticionado = req.params.id;
+		var peticion = {
+			emailPeticionador: req.session.usuario,
+			emailPeticionado : emailPeticionado
+		}
+		gestorBD.insertarPeticion(peticion, function(idPeticion) {
+			if (idPeticion == null) {
+				res.redirect("/listar?mensaje=No existe el usuario;");
+			} else {
+				res.redirect("/listar");
+			}
+		});
+	})
 
 };

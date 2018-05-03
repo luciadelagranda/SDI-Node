@@ -8,7 +8,9 @@ app.use(expressSession({
  resave: true,
  saveUninitialized: true
 }));
+
 var crypto = require('crypto');
+
 var mongo = require('mongodb');
 var swig = require('swig');
 var bodyParser = require('body-parser');
@@ -48,7 +50,15 @@ app.set('clave','abcdefg');
 app.set('crypto',crypto);
 
 // Rutas/controladores por lógica
-require("./routes/rusuarios.js")(app, swig, gestorBD); 
+require("./routes/rusuarios.js")(app, swig, gestorBD);
+
+app.use( function (err, req, res, next ) {
+	 console.log("Error producido: " + err); // we log the error in our db
+	 if (! res.headersSent) {
+	 res.status(400);
+	 res.send("Recurso no disponible");
+	 }
+	});
 
 // lanzar el servidor
 app.listen(app.get('port'), function() {
