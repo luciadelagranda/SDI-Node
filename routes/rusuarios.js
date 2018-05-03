@@ -58,10 +58,7 @@ module.exports = function(app, swig, gestorBD) {
 		res.send(respuesta);
 	});
 
-	app
-			.post(
-					"/identificarse",
-					function(req, res) {
+	app.post("/identificarse", function(req, res) {
 						var seguro = app.get("crypto").createHmac('sha256',
 								app.get('clave')).update(req.body.password)
 								.digest('hex');
@@ -69,21 +66,16 @@ module.exports = function(app, swig, gestorBD) {
 							email : req.body.email,
 							password : seguro
 						}
-						gestorBD
-								.obtenerUsuarios(
-										criterio,
-										function(usuarios) {
-											if (usuarios == null
-													|| usuarios.length == 0) {
-												req.session.usuario = null;
-												res
-														.redirect("/identificarse?mensaje=Email o password incorrecto.");
-											} else {
-												req.session.usuario = usuarios[0].email;
-												res.redirect("/listar");
-											}
-										});
-					});
+						gestorBD.obtenerUsuarios(criterio,function(usuarios) {
+								if (usuarios == null || usuarios.length == 0) {
+										req.session.usuario = null;
+										res.redirect("/identificarse?mensaje=Email o password incorrecto.");
+								} else {
+										req.session.usuario = usuarios[0].email;
+										res.redirect("/listar");
+								}
+						});
+	});
 
 	app.get("/listar", function(req, res) {
 		var criterio = {};
