@@ -213,5 +213,38 @@ module.exports = function(app, swig, gestorBD) {
 			}
 		});
 	})
+	
+	app.get("/amigos", function(req, res) {
+		var criterio = {
+				$or : [ 
+				{emailPeticionador: req.session.usuario , amigos : true},
+				{emailPeticionado : req.session.usuario , amigos : true} 
+		]};
+	
+		var pg = parseInt(req.query.pg); // Es String !!!
+		if (req.query.pg == null) { // Puede no venir el param
+			pg = 1;
+		}
+		
+		gestorBD.obtenerPeticionesPg(criterio, pg, function(peticiones, total) {
+			if (peticiones == null) {
+				res.send("Error al listar.");
+			} else {
+				   var pgUltima = total / 5;
+	                if (total % 5 > 0) { // Sobran decimales
+	                  pgUltima = pgUltima + 1;
+	                }
+
+	                var respuesta = swig.renderFile('views/bamigos.html', {
+						pgActual : pg,
+						pgUltima : pgUltima,
+						emailSession : req.session.usuario,
+						peticiones: peticiones
+	                });
+	                res.send(respuesta);				
+			}
+				
+		});
+	});
 
 };
