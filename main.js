@@ -35,6 +35,7 @@ var routerUsuarioSession = express.Router();
 
 // Aplicar routerUsuarioSession
 app.use("/listar",routerUsuarioSession);
+app.use("/listarPeticiones",routerUsuarioSession);
 
 
 app.use(express.static('public'));

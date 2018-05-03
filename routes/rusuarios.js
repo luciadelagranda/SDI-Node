@@ -112,9 +112,12 @@ module.exports = function(app, swig, gestorBD) {
 				res.send("Error al listar.");
 			} else {
 				
-				var criterio = {
+				var criterio = { $or : [{
 						emailPeticionador: req.session.usuario
-				      }
+				      },
+				      { emailPeticionado : req.session.usuario}
+						
+				]};
 				
 				var peticiones = gestorBD.obtenerPeticiones(criterio,
 			              function(peticiones) {
@@ -156,6 +159,59 @@ module.exports = function(app, swig, gestorBD) {
 	})
 	
 	
+	app.get("/listarPeticiones", function(req, res) {
+		var criterio = {
+				emailPeticionado: req.session.usuario
+		      }
+
+		var pg = parseInt(req.query.pg); // Es String !!!
+		if (req.query.pg == null) { // Puede no venir el param
+			pg = 1;
+		}
+		gestorBD.obtenerPeticionesPg(criterio, pg, function(peticiones, total) {
+			if (peticiones == null) {
+				res.send("Error al listar.");
+			} else {
+
+			                var pgUltima = total / 5;
+			                if (total % 5 > 0) { // Sobran decimales
+			                  pgUltima = pgUltima + 1;
+			                }
+
+			                var respuesta = swig.renderFile('views/bpeticiones.html', {
+								pgActual : pg,
+								pgUltima : pgUltima,
+								emailSession : req.session.usuario,
+								peticiones: peticiones
+			                });
+			                res.send(respuesta);
+			   
+			}
+				
+		});
+	})
 	
+	app.get('/aceptarPeticion/:id', function(req, res) {
+		var emailPeticionador = req.params.id;
+		
+		var peticion = {
+			emailPeticionador : emailPeticionador,
+			emailPeticionado: req.session.usuario,
+			amigos: true
+		}
+		
+		var criterio = {
+				emailPeticionador : emailPeticionador,
+				emailPeticionado: req.session.usuario,
+		}
+		
+		gestorBD.modificarPeticion(criterio,peticion, function(emailPeticionado) {
+			if (emailPeticionado == null) {
+				res.redirect("/listarPeticiones?mensaje=No existe el usuario;");
+			} else {
+				res.redirect("/listarPeticiones");
+			}
+		});
+	})
 
 };
