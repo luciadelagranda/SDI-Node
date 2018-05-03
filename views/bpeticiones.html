@@ -1,7 +1,7 @@
-{% extends "base.html" %} {% block titulo %} Usuarios {% endblock %} {%
+{% extends "base.html" %} {% block titulo %} Peticiones {% endblock %} {%
 block contenido_principal %}
 
-<h2>Lista de usuarios</h2>
+<h2>Lista de peticiones de amistad</h2>
 
 <!-- Búsqueda -->
 <div class="row">
@@ -25,45 +25,22 @@ block contenido_principal %}
 	<table class="table table-hover">
 		<thead>
 			<tr>
-				<th>Nombre</th>
 				<th>Email</th>
 				<th class="col-md-1"></th>
 				<th class="col-md-1"></th>
 			</tr>
 		</thead>
 		<tbody>
-			{% for usuario in usuarios %}
- 				{% set flag = "false" %}
+			{% for peticion in peticiones %}
 			<tr>
-				<td>{{ usuario.name }}</td>
-				<td>{{ usuario.email }}</td> 
 				
-				{% if usuario.email != emailSession %}
-				<td>
-				{% for peticion in peticiones %}
-					
-					{% if (usuario.email == peticion.emailPeticionado or usuario.email == peticion.emailPeticionador) && peticion.amigos %}
-						<a class="btn btn-success  pull-right" disabled="true" >YA SOIS AMIGOS</a>
-						{% set flag = "true" %}
-						
-					{% elif usuario.email == peticion.emailPeticionado && !peticion.amigos %}
-						<a class="btn btn-warning  pull-right" disabled="true" >PETICION ENVIADA</a>
-						{% set flag = "true" %}
-					
+					{% if !peticion.amigos %}
+						<td>{{ peticion.emailPeticionador }}</td>
+						<td><a class="btn btn-success pull-right" href="/aceptarPeticion/{{ peticion.emailPeticionador }}" >
+						ACEPTAR SOLICITUD</a></td>
 					{% endif %}
-					
-				{% endfor %}
 				
 				
-				{%if flag=="false" %}
-				<a class="btn btn-primary  pull-right" href="/enviarPeticion/{{ usuario.email }}" >ENVIAR PETICION</a>
-				{% endif %}
-				<td>
-				{% endif %}
-				
-				{% if usuario.email == emailSession %}
-				<td></td>
-				{% endif %}
 			</tr>
 			{% endfor %}
 		</tbody>
