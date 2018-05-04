@@ -41,5 +41,38 @@ module.exports = function(app, gestorBD) {
             }
         });
     });
-
+	
+ 
+	app.post("/api/mensajes", function(req, res){
+		
+		var mensaje = {
+				emisor: res.usuario,
+				destino: req.body.destino,
+				texto: req.body.texto,
+				leido: false
+		}
+		
+		var criterio = {$or: [{$and: [{"usuario": mensaje.emisor}, {"amigo": mensaje.destino}]},
+            {$and: [{"usuario": mensaje.destino}, {"amigo": mensaje.emisor}]},
+            {"amigos": true}]};
+		
+		gestorBD.obtenerPeticiones(criterio, function(peticiones){
+			if (peticiones == null || peticiones.length == 0){
+				res.status(200);
+				res.json({ mensaje: " Mensaje no insertado, los usuarios no son amigos. "})
+			}
+			else {
+				gestorBD.insertarMensaje(mensaje, function(id) {
+					if(id == null){
+						res.status(500);
+						res.json({ mensaje: "Se ha producido un error"})
+					}
+					else {
+						res.status(201);
+						res.json({ mensaje: "Mensaje creado correctamente"})
+					}
+				});
+			}
+		});
+	});
 }
