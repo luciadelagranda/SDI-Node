@@ -23,6 +23,40 @@ app.use(bodyParser.urlencoded({ extended: true }));
 var gestorBD = require("./modules/gestorBD.js");
 gestorBD.init(app,mongo);
 
+// routerUsuarioToken
+var routerUsuarioToken = express.Router();
+routerUsuarioToken.use(function(req, res, next) {
+	 // obtener el token, puede ser un parámetro GET , POST o HEADER
+	 var token = req.body.token || req.query.token || req.headers['token'];
+	 if (token != null) {
+		 // verificar el token
+		 jwt.verify(token, 'secreto', function(err, infoToken) {
+			 if (err || (Date.now()/1000 - infoToken.tiempo) > 240 ){
+				 res.status(403); // Forbidden
+				 res.json({
+					 acceso : false,
+					 error: 'Token invalido o caducado'
+				 });
+				 // También podríamos comprobar que intoToken.usuario existe
+				 return;
+		
+			 } else {
+				 // dejamos correr la petición
+				 res.usuario = infoToken.usuario;
+				 next();
+			 }
+		 });
+	 } else {
+		 res.status(403); // Forbidden
+		 res.json({
+		 acceso : false,
+		 mensaje: 'No hay Token'
+		 });
+	 }
+});
+// Aplicar routerUsuarioToken
+app.use('/api/usuarios', routerUsuarioToken);
+
 // routerUsuarioSession
 var routerUsuarioSession = express.Router();
 	routerUsuarioSession.use(function(req, res, next) {
@@ -55,6 +89,7 @@ app.set('crypto',crypto);
 
 // Rutas/controladores por lógica
 require("./routes/rusuarios.js")(app, swig, gestorBD);
+require("./routes/rapiusuarios.js")(app, gestorBD);
 
 app.use( function (err, req, res, next ) {
 	 console.log("Error producido: " + err); // we log the error in our db
