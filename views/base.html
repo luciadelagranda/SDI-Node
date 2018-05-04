@@ -32,6 +32,7 @@
 					{% if emailSession != null %}
 					<li id="ListaUsuarios"><a href="/listar">Usuarios</a></li>
 					<li id="ListaPeticiones"><a href="/listarPeticiones">Peticiones amistad</a></li>
+					<li id="ListaAmigos"><a href="/amigos">Amigos</a></li>
 					{% endif%}
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
@@ -43,7 +44,7 @@
 					{% endif%}
 					{% if emailSession != null %}
 					<li><a href="/desconectarse"><span
-							class="glyphicon glyphicon-user"></span> Desconectar</a></li>
+							class="glyphicon glyphicon-user" name="logout"></span>Desconectar</a></li>
 					{% endif%}
 				</ul>
 			</div>
