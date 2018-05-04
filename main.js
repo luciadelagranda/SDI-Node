@@ -2,6 +2,9 @@
 var express = require('express');
 var app = express();
 
+var jwt = require('jsonwebtoken');
+app.set('jwt',jwt);
+
 var expressSession = require('express-session');
 app.use(expressSession({
  secret: 'abcdefg',
