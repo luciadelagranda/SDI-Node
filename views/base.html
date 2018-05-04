@@ -37,14 +37,14 @@
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					{% if emailSession == null %}
-					<li><a th:text="signup" href="/registrarse"><span
+					<li><a href="/registrarse"><span
 							class="glyphicon glyphicon-user"></span> Registrate</a></li>
-					<li><a th:text="login" href="/identificarse"><span
+					<li><a href="/identificarse"><span
 							class="glyphicon glyphicon-log-in"></span> Identifícate</a></li>
 					{% endif%}
 					{% if emailSession != null %}
-					<li><a th:text="logout" href="/desconectarse"><span
-							class="glyphicon glyphicon-user"></span>Desconectar</a></li>
+					<li><a href="/desconectarse"><span
+							class="glyphicon glyphicon-user" name="logout"></span>Desconectar</a></li>
 					{% endif%}
 				</ul>
 			</div>
