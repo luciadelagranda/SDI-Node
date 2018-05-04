@@ -75,4 +75,35 @@ module.exports = function(app, gestorBD) {
 			}
 		});
 	});
+	
+	
+	app.get("/api/mensajes/:email", function(req,res){
+		
+		var criterio = {$or: [{$and: [{"usuario": res.usuario}, {"amigo":  req.params.email}]},
+            {$and: [{"usuario":  req.params.email}, {"amigo": res.usuario}]},
+            {"amigos": true}]};
+		
+		gestorBD.obtenerPeticiones(criterio, function(peticiones){
+			if(peticiones == null){
+				res.status(500);
+				res.json({mensaje: "No son amigos"});
+			}
+			else {
+				var criterio = {$or: [{$and: [{"emisor": res.usuario}, {"destino": req.params.email}]},
+		            {$and: [{"emisor": req.params.email}, {"destino": res.usuario}]}]};
+				
+				gestorBD.obtenerMensajes(criterio, function(mensajes){
+					if (mensajes == null) {
+                        res.status(500);
+                        res.json({
+                            error: "se ha producido un error"
+                        });
+                    } else {
+                        res.status(200);
+                        res.send(JSON.stringify(mensajes));
+                    }
+				});
+			}
+		});
+	});
 }
