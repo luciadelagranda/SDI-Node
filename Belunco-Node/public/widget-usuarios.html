@@ -1,0 +1,74 @@
+<div id="widget-usuarios">
+	<h2>Listado de amigos</h2>
+	<input type="text" class="form-control" placeholder="Filtrar por email"
+id="filtro-email"/>
+	<table class="table table-hover">
+		<thead>
+			<tr>
+				<th>Email</th>
+				<th class="col-md-1"></th>
+			</tr>
+		</thead>
+		<tbody id="tablaCuerpo">
+
+		</tbody>
+	</table>
+	<button  onclick="cargarAmigos()" class="btn btn-primary">Actualizar</button>
+</div>
+
+<script>
+	var amigos;
+	function cargarAmigos() {
+		$.ajax({
+			url : URLbase + "/usuarios",
+			type : "GET",
+			data : {},
+			dataType : 'json',
+			headers : {
+				"token" : token
+			},
+			success : function(respuesta) {
+				amigos = respuesta;
+				actualizarTabla(amigos);
+			},
+			error : function(error) {
+				$("#contenedor-principal").load("widget-login.html");
+			}
+		});
+	}
+	function actualizarTabla(amigosMostrar) {
+		$("#tablaCuerpo").empty(); // Vaciar la tabla
+		for (i = 0; i < amigosMostrar.length; i++) {
+			var amigo;
+			if(usuarioSession == amigosMostrar[i].emailPeticionador)
+				amigo = amigosMostrar[i].emailPeticionado;
+			else
+				amigo = amigosMostrar[i].emailPeticionador;		
+			$("#tablaCuerpo").append(
+					"<tr id="+amigosMostrar[i]._id+">" 
+							+ "<td>"
+							+ amigo + "</td>" 
+							+ "</tr>");
+		}
+	}
+	cargarAmigos();
+	
+	
+	$('#filtro-email').on('input',function(e){
+		 var usuariosFiltrados = [];
+		 var nombreFiltro = $("#filtro-email").val();
+
+		 for (i = 0; i < amigos.length; i++) {
+		 if (amigos[i].emailPeticionador!= usuarioSession && amigos[i].emailPeticionador.indexOf(nombreFiltro) != -1 ){
+			 usuariosFiltrados.push(amigos[i]);
+		 }
+		 if (amigos[i].emailPeticionado!= usuarioSession && amigos[i].emailPeticionado.indexOf(nombreFiltro) != -1 ){
+			 usuariosFiltrados.push(amigos[i]);
+		 } 
+		 }
+		 actualizarTabla(usuariosFiltrados);
+		});
+	
+</script>
+
+
