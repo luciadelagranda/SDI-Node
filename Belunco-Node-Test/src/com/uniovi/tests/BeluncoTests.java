@@ -22,7 +22,7 @@ import com.uniovi.tests.utils.SeleniumUtils;
 public class BeluncoTests {
 
 
-	static String PathFirefox = "C:\\Users\\Pablo\\Desktop\\Firefox46.win\\FirefoxPortable.exe";
+	static String PathFirefox = "C:\\Firefox46.win\\FirefoxPortable.exe";
 
 	static WebDriver driver = getDriver(PathFirefox);
 	static String URL = "http://localhost:8081";
@@ -57,7 +57,7 @@ public class BeluncoTests {
 		PO_HomeView.clickOption(driver, "/registrarse", "class", "btn btn-primary");
 		PO_RegisterView.fillForm(driver, SeleniumUtils.creaEmail(), "belunco", "belunco", "belunco");
 		PO_View.checkElement(driver, "text", "Lista de usuarios");
-		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identificate");
+		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identifícate");
 	}
   
 	@Test 
@@ -72,7 +72,7 @@ public class BeluncoTests {
 		PO_HomeView.clickOption(driver, "/identificarse", "class", "btn btn-primary");
 		PO_LoginView.fillForm(driver, "x@x.com", "x");
 		PO_View.checkElement(driver, "text", "Lista de usuarios");
-		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identificate");
+		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identifícate");
 	}
 
 	@Test 
@@ -91,13 +91,13 @@ public class BeluncoTests {
 				10);
 		assertTrue(elementos.size() == 5);
 		// Ahora nos desconectamos
-		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identificate");
+		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identifícate");
 	}
 
 	@Test 
 	public void FLisUsrInVal() {
 		driver.navigate().to("http://localhost:8081/listar");
-		PO_View.checkElement(driver, "text", "Identificate");
+		PO_View.checkElement(driver, "text", "Identifícate");
 	}
 
 	@Test 
@@ -113,13 +113,13 @@ public class BeluncoTests {
 		busqueda.sendKeys("belu");
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "class", "btn", 2);
 		elementos.get(0).click();
-		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identificate");
+		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identifícate");
 	}
 
 	@Test 
 	public void HBusUsrInVal() {
 		driver.navigate().to("http://localhost:8081/listar?busqueda=x");
-		PO_View.checkElement(driver, "text", "Identificate");
+		PO_View.checkElement(driver, "text", "Identifícate");
 	}
 
 
@@ -138,7 +138,7 @@ public class BeluncoTests {
 		elementos.get(0).click();
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "text", "ENVIAR PETICION", 2);
 		elementos.get(0).click();
-		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identificate");
+		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identifícate");
 	}
 
 
@@ -156,7 +156,7 @@ public class BeluncoTests {
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "class", "btn", 2);
 		elementos.get(0).click();
 		PO_View.checkElement(driver, "text", "PETICION ENVIADA");
-		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identificate");
+		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identifícate");
 	}
 
 	@Test 
@@ -174,7 +174,7 @@ public class BeluncoTests {
 		elementos.get(0).click();
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "text", "ENVIAR PETICION", 2);
 		elementos.get(0).click();
-		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identificate");
+		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identifícate");
 
 		PO_HomeView.clickOption(driver, "/identificarse", "class", "btn btn-primary");
 		PO_LoginView.fillForm(driver, "x@x.com", "x");
@@ -185,7 +185,7 @@ public class BeluncoTests {
 		PO_View.checkElement(driver, "text", "Lista de peticiones de amistad");
 		List<WebElement> elementos3 = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", 10);
 		assertTrue(elementos3.size() >= 1);
-		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identificate");
+		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identifícate");
 	}
 
 	@Test 
@@ -200,7 +200,7 @@ public class BeluncoTests {
 		List<WebElement> elementos2 = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", 10);
 		elementos2 = SeleniumUtils.EsperaCargaPagina(driver, "text", "ACEPTAR SOLICITUD", 10);
 		elementos2.get(0).click();
-		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identificate");
+		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identifícate");
 	}
 
 
@@ -212,7 +212,7 @@ public class BeluncoTests {
 		PO_View.checkElement(driver, "text", "Lista de amigos");
 		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", 10);
 		assertTrue(elementos.size() >= 1);
-		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identificate");
+		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identifícate");
 	}
 
 }
