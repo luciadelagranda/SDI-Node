@@ -64,7 +64,7 @@ public class BeluncoTests {
 	public void BRegInval() {
 		PO_HomeView.clickOption(driver, "/registrarse", "class", "btn btn-primary");
 		PO_RegisterView.fillForm(driver, "hulioo@uniovi.es", "belunco", "belunco", "beluncoo");
-		PO_View.checkElement(driver, "text", "Las contraseÃ±as deben coincidir");
+		PO_View.checkElement(driver, "text", "Las contraseñas deben coincidir");
 	}
 
 	@Test 
