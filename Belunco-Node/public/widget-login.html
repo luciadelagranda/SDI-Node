@@ -21,30 +21,25 @@
 </div>
 
 <script>
-	$("#boton-login")
-			.click(
-					function() {
-						$
-								.ajax({
-									url : URLbase + "/autenticar",
-									type : "POST",
-									data : {
-										email : $("#email").val(),
-										password : $("#password").val()
-									},
-									dataType : 'json',
-									success : function(respuesta) {
-										usuarioSession = $("#email").val();
-										console.log(respuesta.token); // <- Prueba
-										token = respuesta.token;
-										$("#contenedor-principal").load(
-												"widget-usuarios.html");
-									},
-									error : function(error) {
-										$("#widget-login")
-												.prepend(
-														"<div class='alert alert-danger'>Usuario no encontrado</div>");
-									}
-								});
-					});
+	$("#boton-login").click(function() {
+		$.ajax({
+				url : URLbase + "/autenticar",
+				type : "POST",
+				data : {
+					email : $("#email").val(),
+					password : $("#password").val()
+				},
+				dataType : 'json',
+				success : function(respuesta) {
+					usuarioSession = $("#email").val();
+					console.log(respuesta.token); 
+					token = respuesta.token;
+					$("#contenedor-principal").load(
+							"widget-usuarios.html");
+					},
+					error : function(error) {
+						$("#widget-login").prepend("<div class='alert alert-danger'>Usuario no encontrado</div>");
+				}
+			});
+	});
 </script>
