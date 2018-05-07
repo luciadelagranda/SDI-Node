@@ -14,16 +14,13 @@ block contenido_principal %}
 		</thead>
 		<tbody>
 			{% for peticion in peticiones %}
+			{% if !peticion.amigos %}
 			<tr>
-				
-					{% if !peticion.amigos %}
 						<td>{{ peticion.emailPeticionador }}</td>
 						<td><a class="btn btn-success pull-right" href="/aceptarPeticion/{{ peticion.emailPeticionador }}" >
 						ACEPTAR SOLICITUD</a></td>
-					{% endif %}
-				
-				
 			</tr>
+			{% endif %}
 			{% endfor %}
 		</tbody>
 	</table>
