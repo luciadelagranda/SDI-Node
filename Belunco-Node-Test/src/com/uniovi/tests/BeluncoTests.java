@@ -27,7 +27,8 @@ public class BeluncoTests {
 	static WebDriver driver = getDriver(PathFirefox);
 	static String URL = "http://localhost:8081";
 
-	String email;
+	public static final String email1 = SeleniumUtils.creaEmail();
+	public static final String email2 = SeleniumUtils.creaEmail();
 	
 	public static WebDriver getDriver(String PathFirefox) {
 		System.setProperty("webdriver.firefox.bin", PathFirefox);
@@ -37,7 +38,6 @@ public class BeluncoTests {
 
 	@Before
 	public void setUp() {
-		this.email = SeleniumUtils.creaEmail();
 		driver.navigate().to(URL);
 	}
 
@@ -48,7 +48,6 @@ public class BeluncoTests {
 
 	@BeforeClass
 	static public void begin() {
-		
 	}
 
 	@AfterClass
@@ -58,9 +57,13 @@ public class BeluncoTests {
 
 	@Test
 	public void ARegVal() {
-//		this.email = SeleniumUtils.creaEmail();
 		PO_HomeView.clickOption(driver, "/registrarse", "class", "btn btn-primary");
-		PO_RegisterView.fillForm(driver, this.email, "belunco", "belunco", "belunco");
+		PO_RegisterView.fillForm(driver, email1, "belunco", "belunco", "belunco");
+		PO_View.checkElement(driver, "text", "Lista de usuarios");
+		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identifícate");
+		
+		PO_HomeView.clickOption(driver, "/registrarse", "class", "btn btn-primary");
+		PO_RegisterView.fillForm(driver, email2, "belunco", "belunco", "belunco");
 		PO_View.checkElement(driver, "text", "Lista de usuarios");
 		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identifícate");
 	}
@@ -68,14 +71,14 @@ public class BeluncoTests {
 	@Test 
 	public void BRegInval() {
 		PO_HomeView.clickOption(driver, "/registrarse", "class", "btn btn-primary");
-		PO_RegisterView.fillForm(driver, "hulioo@uniovi.es", "belunco", "belunco", "beluncoo");
+		PO_RegisterView.fillForm(driver, "reginval@uniovi.es", "belunco", "belunco", "beluncoo");
 		PO_View.checkElement(driver, "text", "Las contraseñas deben coincidir");
 	}
 
 	@Test 
 	public void CInVal() {
 		PO_HomeView.clickOption(driver, "/identificarse", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "x@x.com", "x");
+		PO_LoginView.fillForm(driver, email1, "belunco");
 		PO_View.checkElement(driver, "text", "Lista de usuarios");
 		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identifícate");
 	}
@@ -90,12 +93,11 @@ public class BeluncoTests {
 	@Test 
 	public void ELisUsrVal() {
 		PO_HomeView.clickOption(driver, "/identificarse", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "x@x.com", "x");
+		PO_LoginView.fillForm(driver, email1, "belunco");
 		PO_View.checkElement(driver, "text", "Lista de usuarios");
 		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr",
 				10);
 		assertTrue(elementos.size() == 5);
-		// Ahora nos desconectamos
 		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identifícate");
 	}
 
@@ -108,14 +110,14 @@ public class BeluncoTests {
 	@Test 
 	public void GBusUsrVal() {
 		PO_HomeView.clickOption(driver, "/identificarse", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "x@x.com", "x");
+		PO_LoginView.fillForm(driver, email1, "belunco");
 		PO_View.checkElement(driver, "text", "Lista de usuarios");
 		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", 10);
 		assertTrue(elementos.size() == 5);
 		WebElement busqueda = driver.findElement(By.name("busqueda"));
 		busqueda.click();
 		busqueda.clear();
-		busqueda.sendKeys("belu");
+		busqueda.sendKeys(email2);
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "class", "btn", 2);
 		elementos.get(0).click();
 		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identifícate");
@@ -123,7 +125,7 @@ public class BeluncoTests {
 
 	@Test 
 	public void HBusUsrInVal() {
-		driver.navigate().to("http://localhost:8081/listar?busqueda=x");
+		driver.navigate().to("http://localhost:8081/listar?busqueda=belunco");
 		PO_View.checkElement(driver, "text", "Identifícate");
 	}
 
@@ -131,14 +133,14 @@ public class BeluncoTests {
 	@Test 
 	public void IInvVal() {
 		PO_HomeView.clickOption(driver, "/identificarse", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "x@x.com", "x");
+		PO_LoginView.fillForm(driver, email1, "belunco");
 		PO_View.checkElement(driver, "text", "Lista de usuarios");
 		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", 10);
 		assertTrue(elementos.size() == 5);
 		WebElement busqueda = driver.findElement(By.name("busqueda"));
 		busqueda.click();
 		busqueda.clear();
-		busqueda.sendKeys(this.email);
+		busqueda.sendKeys(email2);
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "class", "btn", 2);
 		elementos.get(0).click();
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "text", "ENVIAR PETICION", 2);
@@ -150,14 +152,14 @@ public class BeluncoTests {
 	@Test
   public void JInvInVal() {
 		PO_HomeView.clickOption(driver, "/identificarse", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "x@x.com", "x");
+		PO_LoginView.fillForm(driver, email1, "belunco");
 		PO_View.checkElement(driver, "text", "Lista de usuarios");
 		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", 10);
 		assertTrue(elementos.size() == 5);
 		WebElement busqueda = driver.findElement(By.name("busqueda"));
 		busqueda.click();
 		busqueda.clear();
-		busqueda.sendKeys("belu");
+		busqueda.sendKeys(email2);
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "class", "btn", 2);
 		elementos.get(0).click();
 		PO_View.checkElement(driver, "text", "PETICION ENVIADA");
@@ -166,23 +168,8 @@ public class BeluncoTests {
 
 	@Test 
 	public void KLisInvVal() {
-		PO_HomeView.clickOption(driver, "/registrarse", "class", "btn btn-primary");
-		PO_RegisterView.fillForm(driver, SeleniumUtils.creaEmail(), "belunco", "belunco", "belunco");
-		PO_View.checkElement(driver, "text", "Lista de usuarios");
-		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", 10);
-		assertTrue(elementos.size() == 5);
-		WebElement busqueda = driver.findElement(By.name("busqueda"));
-		busqueda.click();
-		busqueda.clear();
-		busqueda.sendKeys("x");
-		elementos = SeleniumUtils.EsperaCargaPagina(driver, "class", "btn", 2);
-		elementos.get(0).click();
-		elementos = SeleniumUtils.EsperaCargaPagina(driver, "text", "ENVIAR PETICION", 2);
-		elementos.get(0).click();
-		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identifícate");
-
 		PO_HomeView.clickOption(driver, "/identificarse", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "x@x.com", "x");
+		PO_LoginView.fillForm(driver, email2, "belunco");
 		PO_View.checkElement(driver, "text", "Lista de usuarios");
 		List<WebElement> elementos2 = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", 10);
 		assertTrue(elementos2.size() == 5);
@@ -196,7 +183,7 @@ public class BeluncoTests {
 	@Test 
 	public void LAcepInvVal() {
 		PO_HomeView.clickOption(driver, "/identificarse", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "x@x.com", "x");
+		PO_LoginView.fillForm(driver, email2, "belunco");
 		PO_View.checkElement(driver, "text", "Lista de usuarios");
 		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", 10);
 		assertTrue(elementos.size() == 5);
@@ -212,7 +199,7 @@ public class BeluncoTests {
 	@Test 
 	public void MListAmiVal() {
 		PO_HomeView.clickOption(driver, "/identificarse", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "x@x.com", "x");
+		PO_LoginView.fillForm(driver, email1, "belunco");
 		PO_HomeView.clickOption(driver, "/amigos", "text", "Amigos");
 		PO_View.checkElement(driver, "text", "Lista de amigos");
 		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", 10);
