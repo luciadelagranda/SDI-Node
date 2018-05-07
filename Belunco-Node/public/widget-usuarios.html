@@ -1,7 +1,7 @@
 <div id="widget-usuarios">
 	<h2>Listado de amigos</h2>
 	<input type="text" class="form-control" placeholder="Filtrar por email"
-id="filtro-email"/>
+		id="filtro-email" />
 	<table class="table table-hover">
 		<thead>
 			<tr>
@@ -13,7 +13,7 @@ id="filtro-email"/>
 
 		</tbody>
 	</table>
-	<button  onclick="cargarAmigos()" class="btn btn-primary">Actualizar</button>
+	<button onclick="cargarAmigos()" class="btn btn-primary">Actualizar</button>
 </div>
 
 <script>
@@ -40,34 +40,73 @@ id="filtro-email"/>
 		$("#tablaCuerpo").empty(); // Vaciar la tabla
 		for (i = 0; i < amigosMostrar.length; i++) {
 			var amigo;
-			if(usuarioSession == amigosMostrar[i].emailPeticionador)
+			if (usuarioSession == amigosMostrar[i].emailPeticionador)
 				amigo = amigosMostrar[i].emailPeticionado;
 			else
-				amigo = amigosMostrar[i].emailPeticionador;		
+				amigo = amigosMostrar[i].emailPeticionador;
 			$("#tablaCuerpo").append(
-					"<tr id="+amigosMostrar[i]._id+">" 
-							+ "<td>"
-							+ amigo + "</td>" 
-							+ "</tr>");
+					"<tr id="+amigosMostrar[i]._id+">" + "<td>"
+							+ "<a onclick = \"cargarMensajes('" + amigo + "')\">"
+							+ amigo + "</a>" +"</td>" + "</tr>");
 		}
 	}
+	
 	cargarAmigos();
-	
-	
-	$('#filtro-email').on('input',function(e){
-		 var usuariosFiltrados = [];
-		 var nombreFiltro = $("#filtro-email").val();
 
-		 for (i = 0; i < amigos.length; i++) {
-		 if (amigos[i].emailPeticionador!= usuarioSession && amigos[i].emailPeticionador.indexOf(nombreFiltro) != -1 ){
-			 usuariosFiltrados.push(amigos[i]);
-		 }
-		 if (amigos[i].emailPeticionado!= usuarioSession && amigos[i].emailPeticionado.indexOf(nombreFiltro) != -1 ){
-			 usuariosFiltrados.push(amigos[i]);
-		 } 
-		 }
-		 actualizarTabla(usuariosFiltrados);
+	$('#filtro-email')
+			.on(
+					'input',
+					function(e) {
+						var usuariosFiltrados = [];
+						var nombreFiltro = $("#filtro-email").val();
+
+						for (i = 0; i < amigos.length; i++) {
+							if (amigos[i].emailPeticionador != usuarioSession
+									&& amigos[i].emailPeticionador
+											.indexOf(nombreFiltro) != -1) {
+								usuariosFiltrados.push(amigos[i]);
+							}
+							if (amigos[i].emailPeticionado != usuarioSession
+									&& amigos[i].emailPeticionado
+											.indexOf(nombreFiltro) != -1) {
+								usuariosFiltrados.push(amigos[i]);
+							}
+						}
+						actualizarTabla(usuariosFiltrados);
+					});
+
+	
+	function actualizarTablaMensajes(mensajesMostrar) {
+		$("#tablaMensajes").empty(); // Vaciar la tabla
+		for (i = 0; i < mensajesMostrar.length; i++) {
+			$("#tablaMensajes").append(
+					"<tr id="+ mensajesMostrar[i]._id+">" + "<td>"
+							+ mensajesMostrar[i].texto + "</td>");
+		}
+	}
+	
+	var mensajes;
+	function cargarMensajes(amigo) {
+		$("#contenedor-principal").load("widget-mensajes.html");
+		$.ajax({
+			url : URLbase + "/mensajes/" + amigo,
+			type : "GET",
+			data : {},
+			dataType : 'json',
+			headers : {
+				"token" : token
+			},
+			success : function(respuesta) {
+				mensajes = respuesta;
+				actualizarTablaMensajes(mensajes);
+				$("#mensajesCon").text(amigo);
+			},
+			error : function(error) {
+				clearInterval(intervalMId);
+				$("#contenedor-principal").load("widget-login.html");
+			}
 		});
+	}
 	
 </script>
 
