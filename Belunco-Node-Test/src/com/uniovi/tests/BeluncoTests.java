@@ -224,7 +224,6 @@ public class BeluncoTests {
 	
 	@Test
 	public void PCListAmiVal() {
-		//Añadir amigos
 		driver.navigate().to("http://localhost:8081/cliente.html");
 		PO_LoginView.fillForm(driver, "x@x.com", "x");
 		PO_View.checkElement(driver, "text", "Listado de amigos");
@@ -275,10 +274,11 @@ public class BeluncoTests {
 		WebElement mensaje = driver.findElement(By.name("texto"));
 		mensaje.click();
 		mensaje.clear();
-		mensaje.sendKeys("Nuevo mensaje");
+		String aleatorio = SeleniumUtils.creaEmail(); 
+		mensaje.sendKeys(aleatorio);
 		By boton = By.className("btn");
 		driver.findElement(boton).click();
 		SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", 1000);
-		PO_View.checkElement(driver, "text", "Nuevo mensaje");
+		PO_View.checkElement(driver, "text", aleatorio);
 	}
 }
