@@ -17,6 +17,13 @@
 </div>
 
 <script>
+
+var flag;
+function widgetUsuarios() {
+	$("#contenedor-principal").load("widget-usuarios.html");
+	flag=false;
+}
+
 	var amigos;
 	function cargarAmigos() {
 		$.ajax({
@@ -79,9 +86,10 @@
 	function actualizarTablaMensajes(mensajesMostrar) {
 		$("#tablaMensajes").empty(); // Vaciar la tabla
 		for (i = 0; i < mensajesMostrar.length; i++) {
+			
+			var linea = "<td>" + mensajesMostrar[i].texto + "</td>";
 			$("#tablaMensajes").append(
-					"<tr id="+ mensajesMostrar[i]._id+">" + "<td>"
-							+ mensajesMostrar[i].texto + "</td>");
+					"<tr id="+ mensajesMostrar[i]._id+">" + linea + "</tr>");
 		}
 	}
 	
@@ -100,6 +108,7 @@
 				mensajes = respuesta;
 				actualizarTablaMensajes(mensajes);
 				$("#mensajesCon").text(amigo);
+				flag=true;
 			},
 			error : function(error) {
 				clearInterval(intervalMId);
@@ -107,6 +116,8 @@
 			}
 		});
 	}
+	
+	
 	
 </script>
 
