@@ -25,7 +25,7 @@ module.exports = function(app, swig, gestorBD) {
 						if (id == null) {
 							res.send("No se ha podido registrar el usuario");
 						} else {
-							req.session.usuario = usuario.email;
+							req.session.usuario = usuario;
 							res.redirect("/listar");
 						}
 					});
@@ -38,7 +38,6 @@ module.exports = function(app, swig, gestorBD) {
 
 	app.get("/identificarse", function(req, res) {
 		var respuesta = swig.renderFile('views/bidentificacion.html', {
-			emailSession : req.session.usuario
 		});
 		res.send(respuesta);
 	});
@@ -56,7 +55,7 @@ module.exports = function(app, swig, gestorBD) {
 							req.session.usuario = null;
 							res.redirect("/identificarse?mensaje=Email o password incorrecto.");
 					} else {
-							req.session.usuario = usuarios[0].email;
+							req.session.usuario = usuarios[0];
 							res.redirect("/listar");
 					}
 			});
@@ -91,9 +90,9 @@ module.exports = function(app, swig, gestorBD) {
 			} else {
 				
 				var criterio = { $or : [{
-						emailPeticionador: req.session.usuario
+						emailPeticionador: req.session.usuario.email
 				      },
-				      { emailPeticionado : req.session.usuario}
+				      { emailPeticionado : req.session.usuario.email}
 						
 				]};
 				
@@ -109,7 +108,7 @@ module.exports = function(app, swig, gestorBD) {
 								usuarios : usuarios,
 								pgActual : pg,
 								pgUltima : pgUltima,
-								emailSession : req.session.usuario,
+								emailSession : req.session.usuario.email,
 								peticiones: peticiones
 			                });
 			                res.send(respuesta);
@@ -123,23 +122,35 @@ module.exports = function(app, swig, gestorBD) {
 	app.get('/enviarPeticion/:id', function(req, res) {
 		var emailPeticionado = req.params.id;
 		var peticion = {
-			emailPeticionador: req.session.usuario,
-			emailPeticionado : emailPeticionado,
-			amigos: false
-		}
-		gestorBD.insertarPeticion(peticion, function(idPeticion) {
-			if (idPeticion == null) {
+		};
+		var criterio = { "email" : emailPeticionado};
+		gestorBD.obtenerUsuarios(criterio, function(usuarios){
+			if(usuarios == null)
 				res.redirect("/listar?mensaje=No existe el usuario;");
-			} else {
-				res.redirect("/listar");
+			else{
+				peticion = {
+						emailPeticionador: req.session.usuario.email,
+						emailPeticionado : emailPeticionado,
+						nombrePeticionador: req.session.usuario.name,
+						nombrePeticionado: usuarios[0].name,
+						amigos: false
+					};
 			}
+			
+			gestorBD.insertarPeticion(peticion, function(idPeticion) {
+				if (idPeticion == null) {
+					res.redirect("/listar?mensaje=No existe el usuario;");
+				} else {
+					res.redirect("/listar");
+				}
+			});
 		});
 	})
 	
 	
 	app.get("/listarPeticiones", function(req, res) {
 		var criterio = {
-				emailPeticionado: req.session.usuario
+				emailPeticionado: req.session.usuario.email
 		      }
 
 		var pg = parseInt(req.query.pg); // Es String !!!
@@ -159,7 +170,7 @@ module.exports = function(app, swig, gestorBD) {
                 var respuesta = swig.renderFile('views/bpeticiones.html', {
 					pgActual : pg,
 					pgUltima : pgUltima,
-					emailSession : req.session.usuario,
+					emailSession : req.session.usuario.email,
 					peticiones: peticiones
                 });
                 res.send(respuesta);
@@ -174,13 +185,13 @@ module.exports = function(app, swig, gestorBD) {
 		
 		var peticion = {
 			emailPeticionador : emailPeticionador,
-			emailPeticionado: req.session.usuario,
+			emailPeticionado: req.session.usuario.email,
 			amigos: true
 		}
 		
 		var criterio = {
 				emailPeticionador : emailPeticionador,
-				emailPeticionado: req.session.usuario,
+				emailPeticionado: req.session.usuario.email,
 		}
 		
 		gestorBD.modificarPeticion(criterio,peticion, function(emailPeticionado) {
@@ -195,8 +206,8 @@ module.exports = function(app, swig, gestorBD) {
 	app.get("/amigos", function(req, res) {
 		var criterio = {
 				$or : [ 
-				{emailPeticionador: req.session.usuario , amigos : true},
-				{emailPeticionado : req.session.usuario , amigos : true} 
+				{emailPeticionador: req.session.usuario.email , amigos : true},
+				{emailPeticionado : req.session.usuario.email , amigos : true} 
 		]};
 	
 		var pg = parseInt(req.query.pg); // Es String !!!
@@ -216,7 +227,7 @@ module.exports = function(app, swig, gestorBD) {
 	                var respuesta = swig.renderFile('views/bamigos.html', {
 						pgActual : pg,
 						pgUltima : pgUltima,
-						emailSession : req.session.usuario,
+						emailSession : req.session.usuario.email,
 						peticiones: peticiones
 	                });
 	                res.send(respuesta);				
