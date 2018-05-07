@@ -12,7 +12,6 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import com.uniovi.tests.pageobjects.PO_HomeView;
 import com.uniovi.tests.pageobjects.PO_LoginView;
 import com.uniovi.tests.pageobjects.PO_PrivateView;
-import com.uniovi.tests.pageobjects.PO_PublicationView;
 import com.uniovi.tests.pageobjects.PO_RegisterView;
 import com.uniovi.tests.pageobjects.PO_View;
 import com.uniovi.tests.utils.SeleniumUtils;
@@ -206,5 +205,80 @@ public class BeluncoTests {
 		assertTrue(elementos.size() >= 1);
 		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identifícate");
 	}
-
+	
+	//EMPIEZAN LOS TEST DEL CLIENTE
+	@Test
+	public void NCInVal() {
+		driver.navigate().to("http://localhost:8081/cliente.html");
+		PO_LoginView.fillForm(driver, "x@x.com", "x");
+		PO_View.checkElement(driver, "text", "Listado de amigos");
+	}
+	
+	@Test
+	public void OCInInVal() {
+		driver.navigate().to("http://localhost:8081/cliente.html");
+		PO_LoginView.fillForm(driver, "com", "com");
+		PO_View.checkElement(driver, "text", "Usuario no encontrado");
+		
+	}
+	
+	@Test
+	public void PCListAmiVal() {
+		driver.navigate().to("http://localhost:8081/cliente.html");
+		PO_LoginView.fillForm(driver, "x@x.com", "x");
+		PO_View.checkElement(driver, "text", "Listado de amigos");
+		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", 10);
+		assertTrue(elementos.size() >= 3);
+	}
+	
+	@Test
+	public void QCListAmiValFil() {
+		driver.navigate().to("http://localhost:8081/cliente.html");
+		PO_LoginView.fillForm(driver, "x@x.com", "x");
+		PO_View.checkElement(driver, "text", "Listado de amigos");
+		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", 10);
+		assertTrue(elementos.size() >= 3);
+		WebElement busqueda = driver.findElement(By.name("busqueda"));
+		busqueda.click();
+		busqueda.clear();
+		busqueda.sendKeys("s");
+		List<WebElement> elementos2 = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", 10);
+		assertTrue(elementos2.size() == 1);
+	}
+	
+	
+	@Test
+	public void RCListMenVal() {
+		driver.navigate().to("http://localhost:8081/cliente.html");
+		PO_LoginView.fillForm(driver, "x@x.com", "x");
+		PO_View.checkElement(driver, "text", "Listado de amigos");
+		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr/td/a", 10);
+		assertTrue(elementos.size() >= 1);
+		elementos.get(0).click();
+		List<WebElement> elementosMensajes = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", 100);
+		assertTrue(elementosMensajes.size() >= 3);
+		
+	}
+	
+	@Test
+	public void SCCrearMenVal() {
+		driver.navigate().to("http://localhost:8081/cliente.html");
+		PO_LoginView.fillForm(driver, "x@x.com", "x");
+		PO_View.checkElement(driver, "text", "Listado de amigos");
+		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr/td/a", 10);
+		assertTrue(elementos.size() >= 1);
+		elementos.get(0).click();
+		List<WebElement> elementosMensajes = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", 100);
+		int size = elementosMensajes.size();
+		assertTrue(size >= 3);
+		WebElement mensaje = driver.findElement(By.name("texto"));
+		mensaje.click();
+		mensaje.clear();
+		String aleatorio = SeleniumUtils.creaEmail(); 
+		mensaje.sendKeys(aleatorio);
+		By boton = By.className("btn");
+		driver.findElement(boton).click();
+		SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", 1000);
+		PO_View.checkElement(driver, "text", aleatorio);
+	}
 }

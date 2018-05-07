@@ -15,8 +15,10 @@ block contenido_principal %}
 		{% for peticion in peticiones %}
 			<tr>
 				{% if (emailSession == peticion.emailPeticionado) %}
+					<td>{{ peticion.nombrePeticionador }}</td>
 					<td>{{ peticion.emailPeticionador }}</td>
 				{% elif (emailSession == peticion.emailPeticionador) %}
+					<td>{{ peticion.nombrePeticionado }}</td>
 					<td>{{ peticion.emailPeticionado }}</td>
 				{% endif %}
 			</tr>
