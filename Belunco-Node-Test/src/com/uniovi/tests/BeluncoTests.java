@@ -27,6 +27,8 @@ public class BeluncoTests {
 	static WebDriver driver = getDriver(PathFirefox);
 	static String URL = "http://localhost:8081";
 
+	String email;
+	
 	public static WebDriver getDriver(String PathFirefox) {
 		System.setProperty("webdriver.firefox.bin", PathFirefox);
 		WebDriver driver = new FirefoxDriver();
@@ -54,8 +56,9 @@ public class BeluncoTests {
 
 	@Test
 	public void ARegVal() {
+		this.email = SeleniumUtils.creaEmail();
 		PO_HomeView.clickOption(driver, "/registrarse", "class", "btn btn-primary");
-		PO_RegisterView.fillForm(driver, SeleniumUtils.creaEmail(), "belunco", "belunco", "belunco");
+		PO_RegisterView.fillForm(driver, email, "belunco", "belunco", "belunco");
 		PO_View.checkElement(driver, "text", "Lista de usuarios");
 		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identifícate");
 	}
@@ -64,7 +67,7 @@ public class BeluncoTests {
 	public void BRegInval() {
 		PO_HomeView.clickOption(driver, "/registrarse", "class", "btn btn-primary");
 		PO_RegisterView.fillForm(driver, "hulioo@uniovi.es", "belunco", "belunco", "beluncoo");
-		PO_View.checkElement(driver, "text", "Las contrase�as deben coincidir");
+		PO_View.checkElement(driver, "text", "Las contraseñas deben coincidir");
 	}
 
 	@Test 
@@ -133,7 +136,7 @@ public class BeluncoTests {
 		WebElement busqueda = driver.findElement(By.name("busqueda"));
 		busqueda.click();
 		busqueda.clear();
-		busqueda.sendKeys("belu");
+		busqueda.sendKeys(this.email);
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "class", "btn", 2);
 		elementos.get(0).click();
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "text", "ENVIAR PETICION", 2);
