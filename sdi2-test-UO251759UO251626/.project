@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>BeluNco</name>
+	<name>sdi2-test-UO251759UO251626</name>
 	<comment></comment>
 	<projects>
 	</projects>
 	<buildSpec>
 		<buildCommand>
-			<name>com.eclipsesource.jshint.ui.builder</name>
+			<name>org.eclipse.jdt.core.javabuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>org.nodeclipse.ui.NodeNature</nature>
-		<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
-		<nature>tern.eclipse.ide.core.ternnature</nature>
+		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
 </projectDescription>
