@@ -37,6 +37,7 @@ public class BeluncoTests {
 
 	@Before
 	public void setUp() {
+		this.email = SeleniumUtils.creaEmail();
 		driver.navigate().to(URL);
 	}
 
@@ -47,6 +48,7 @@ public class BeluncoTests {
 
 	@BeforeClass
 	static public void begin() {
+		
 	}
 
 	@AfterClass
@@ -56,9 +58,9 @@ public class BeluncoTests {
 
 	@Test
 	public void ARegVal() {
-		this.email = SeleniumUtils.creaEmail();
+//		this.email = SeleniumUtils.creaEmail();
 		PO_HomeView.clickOption(driver, "/registrarse", "class", "btn btn-primary");
-		PO_RegisterView.fillForm(driver, email, "belunco", "belunco", "belunco");
+		PO_RegisterView.fillForm(driver, this.email, "belunco", "belunco", "belunco");
 		PO_View.checkElement(driver, "text", "Lista de usuarios");
 		PO_PrivateView.clickOption(driver, "/desconectarse", "text", "Identifícate");
 	}
